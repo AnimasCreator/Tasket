@@ -1,6 +1,10 @@
 import tkinter as tk
+from tkinter import scrolledtext
 import matplotlib.pyplot as plt
 import spacy
+
+# Lista de categorías preseleccionadas
+categorias_preseleccionadas = ["Alimentos", "Transporte", "Educación", "Entretenimiento", "Salud", "Hogar", "Tecnología", "Viajes", "Otros"]
 
 # Paso 1: Diseño de la Interfaz de Usuario
 def ingresar_gasto():
@@ -9,8 +13,15 @@ def ingresar_gasto():
     categoria = combo_categorias.get()
     moneda = combo_monedas.get()
 
+    # Crear el registro del gasto
+    registro_gasto = f"Descripción: {descripcion_gasto}\nCategoría: {categoria}\nMonto: {gasto} {moneda}\n\n"
+
     # Actualizamos la lista de gastos
-    lista_gastos.insert(tk.END, f"Descripción: {descripcion_gasto}, Categoría: {categoria}, Monto: {gasto} {moneda}")
+    registro_text.insert(tk.END, registro_gasto)
+
+    # Limpiar los campos de entrada después de registrar el gasto
+    entry_gasto.delete(0, tk.END)
+    entry_descripcion_gasto.delete(0, tk.END)
 
     # Actualizamos el gráfico de gastos
     actualizar_grafico()
@@ -31,41 +42,45 @@ def actualizar_grafico():
 
 # Crear la ventana principal
 root = tk.Tk()
-root.title("Gestión de Gastos y Tiempo")
+root.title("Tasket")
 
 # Etiquetas y campos de entrada para ingreso de gastos
-label_gasto = tk.Label(root, text="Ingresar Gasto:")
+label_gasto = tk.Label(root, text="Monto del Gasto (en USD o EUR)")
 entry_gasto = tk.Entry(root)
 
-label_descripcion_gasto = tk.Label(root, text="Descripción del Gasto:")
+#Etiqueta y campo de entrada para la descripcion del gasto
+label_descripcion_gasto = tk.Label(root, text="Descripcion del Gasto")
 entry_descripcion_gasto = tk.Entry(root)
 
-label_categoria = tk.Label(root, text="Categoría:")
+# Etiqueta y menú desplegable para seleccionar la categoría del gasto
+label_categoria = tk.Label(root, text="Categoria del Gasto")
 combo_categorias = tk.StringVar()
-combo_categorias.set("Alimentos")  # Valor predeterminado
-dropdown_categorias = tk.OptionMenu(root, combo_categorias, "Alimentos", "Transporte", "Otros")
+combo_categorias.set(categorias_preseleccionadas[0])  # Valor predeterminado
+dropdown_categorias = tk.OptionMenu(root, combo_categorias, *categorias_preseleccionadas)
 
+# Etiqueta y menú desplegable para seleccionar la moneda del gasto
 label_moneda = tk.Label(root, text="Moneda:")
 combo_monedas = tk.StringVar()
-combo_monedas.set("USD")  # Valor predeterminado
+combo_monedas.set("EUR")  # Valor predeterminado
 dropdown_monedas = tk.OptionMenu(root, combo_monedas, "USD", "EUR")
 
+# Botón para registrar el gasto
 button_registrar_gasto = tk.Button(root, text="Registrar Gasto", command=ingresar_gasto)
 
-# Lista de gastos registrados
-lista_gastos = tk.Listbox(root)
-lista_gastos.pack()
+# Widget de registro de datos con barras de desplazamiento vertical y horizontal
+registro_text = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=60, height=15)
 
-# Colocar elementos en la ventana
-label_gasto.pack()
-entry_gasto.pack()
-label_descripcion_gasto.pack()
-entry_descripcion_gasto.pack()
-label_categoria.pack()
-dropdown_categorias.pack()
-label_moneda.pack()
-dropdown_monedas.pack()
-button_registrar_gasto.pack()
+# Colocar elementos en la ventana usando la cuadrícula
+label_gasto.grid(row=0, column=0, sticky="w", padx=10, pady=5)
+entry_gasto.grid(row=0, column=1, padx=10, pady=5)
+label_descripcion_gasto.grid(row=1, column=0, sticky="w", padx=10, pady=5)
+entry_descripcion_gasto.grid(row=1, column=1, padx=10, pady=5)
+label_categoria.grid(row=2, column=0, sticky="w", padx=10, pady=5)
+dropdown_categorias.grid(row=2, column=1, padx=10, pady=5)
+label_moneda.grid(row=3, column=0, sticky="w", padx=10, pady=5)
+dropdown_monedas.grid(row=3, column=1, padx=10, pady=5)
+button_registrar_gasto.grid(row=4, column=0, columnspan=2, pady=10)
+registro_text.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
 
 # Ejecutar la aplicación
 root.mainloop()
