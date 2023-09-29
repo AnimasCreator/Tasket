@@ -13,6 +13,11 @@ def ingresar_gasto():
     categoria = combo_categorias.get()
     moneda = combo_monedas.get()
 
+    # Validar los datos ingresados
+    if not validar_monto(gasto) or not descripcion_gasto or categoria not in categorias_preseleccionadas:
+        mostrar_error ("Error de Validacion", "Por favor, ingrese datos validos en todos los campos.")
+        return
+
     # Crear el registro del gasto
     registro_gasto = f"Descripción: {descripcion_gasto}\nCategoría: {categoria}\nMonto: {gasto} {moneda}\n\n"
 
@@ -25,6 +30,23 @@ def ingresar_gasto():
 
     # Actualizamos el gráfico de gastos
     actualizar_grafico()
+
+#Funcion para validar el monto como un numero valido
+def validar_monto(monto):
+    try:
+        float(monto)
+        return True
+    except ValueError:
+        return False
+
+#Funcion para mostrar mensaje de error
+def mostrar_error(titulo, mensaje):
+    error_window = tk.Toplevel(root)
+    error_window.title(titulo)
+    error_label = tk.Label(error_window, text=mensaje)
+    error_label.pack()
+    error_button = tk.Button(error_window, text="Cerrar", command=error_window.destroy)
+    error_button.pack()
 
 # Paso 2: Categorización Automática de Gastos
 nlp = spacy.load("en_core_web_sm")
